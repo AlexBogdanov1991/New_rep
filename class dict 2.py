@@ -31,7 +31,7 @@ class MyDict:
         return [(item[0], item[1]) for item in self.data]
 
     def __str__(self):
-        return str(dict(self.data))
+        return str(self.data)
 
     def __contains__(self, key):
         for item in self.data:
