@@ -1,4 +1,5 @@
 import os
+import shutil
 
 dir_name = "Управление_файлами"
 os.makedirs(dir_name, exist_ok=True)
@@ -24,8 +25,7 @@ os.makedirs(subdir_name, exist_ok=True)
 new_file_path = os.path.join(subdir_name, "file1.txt")
 os.rename(file1_path, new_file_path)
 
-os.rmdir(subdir_name)
-os.rmdir(dir_name)
+shutil.rmtree(dir_name)
 
 print("Все операции выполнены успешно.")
 
