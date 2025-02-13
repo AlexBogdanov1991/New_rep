@@ -66,16 +66,39 @@ for month, total in monthly_sales.items():
 
 
 
-with open('employees.json', 'r', encoding='utf-8') as f:
-    employees = json.load(f)
+with open('employees.json', 'r', encoding='utf-8') as json_file:
+    employees = json.load(json_file)
 
-performance = pd.read_csv('performance.csv')
+performance = {}
+with open('performance.csv', 'r', encoding='utf-8') as csv_file:
+    csv_reader = csv.DictReader(csv_file)
+    for row in csv_reader:
+        employee_id = row['employee_id']
+        score = float(row['performance_score'])
+        performance[employee_id] = score
 
-merged_data = pd.DataFrame(employees).merge(performance, left_on='id', right_on='employee_id', how='inner')
+for employee in employees:
+    employee_id = employee['id']
+    if employee_id in performance:
+        employee['performance_score'] = performance[employee_id]
 
-average_performance = merged_data['performance'].mean()
-best_employee = merged_data.loc[merged_data['performance'].idxmax()]
+total_performance = 0
+highest_performance = 0
+best_employee = None
+employee_count = 0
 
-print(f'Средняя производительность: {average_performance:.2f}')
-print(f'Сотрудник с наивысшей производительностью: {best_employee["имя"]}, производительность: {best_employee["performance"]}')
+for employee in employees:
+    if 'performance_score' in employee:
+        total_performance += employee['performance_score']
+        employee_count += 1
+        if employee['performance_score'] > highest_performance:
+            highest_performance = employee['performance_score']
+            best_employee = employee['name']
 
+if employee_count > 0:
+    average_performance = total_performance / employee_count
+    print(f"Средняя производительность: {average_performance:.2f}")
+    if best_employee:
+        print(f"Сотрудник с наивысшей производительностью: {best_employee} ({highest_performance:.2f})")
+else:
+    print("Нет данных о производительности.")
