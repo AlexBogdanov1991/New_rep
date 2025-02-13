@@ -60,3 +60,22 @@ print('Общая сумма продаж по месяцам:')
 for month, total in monthly_sales.items():
     print(f'{month}: {total}')
 
+
+
+
+
+
+
+with open('employees.json', 'r', encoding='utf-8') as f:
+    employees = json.load(f)
+
+performance = pd.read_csv('performance.csv')
+
+merged_data = pd.DataFrame(employees).merge(performance, left_on='id', right_on='employee_id', how='inner')
+
+average_performance = merged_data['performance'].mean()
+best_employee = merged_data.loc[merged_data['performance'].idxmax()]
+
+print(f'Средняя производительность: {average_performance:.2f}')
+print(f'Сотрудник с наивысшей производительностью: {best_employee["имя"]}, производительность: {best_employee["performance"]}')
+
