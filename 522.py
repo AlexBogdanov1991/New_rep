@@ -1,5 +1,4 @@
 import os
-import shutil
 
 dir_name = "Управление_файлами"
 os.makedirs(dir_name, exist_ok=True)
@@ -19,13 +18,9 @@ for item in os.listdir(dir_name):
 
 os.remove(file2_path)
 
-subdir_name = os.path.join(dir_name, "Поддиректория")
-os.makedirs(subdir_name, exist_ok=True)
-
-new_file_path = os.path.join(subdir_name, "file1.txt")
-os.rename(file1_path, new_file_path)
-
-shutil.rmtree(dir_name)
+os.remove(file1_path)
+os.rmdir(dir_name)
 
 print("Все операции выполнены успешно.")
+
 
