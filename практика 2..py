@@ -36,3 +36,28 @@ print(queue)
 queue.pop()
 queue.popleft()
 print(queue)
+
+
+from collections import deque    # задание 5
+
+d = deque([])
+d.append(1)
+d.appendleft(0)
+d.pop()
+print(d)
+
+
+
+
+from collections import namedtuple
+
+Book = namedtuple('Book', ['title', 'author', 'genre'])
+
+
+book1 = Book(title='Мастер и Маргарита', author='Михаил Булгаков', genre='Роман')
+
+books = [book1]
+
+for book in books:
+    print(f'Название: {book.title}, Автор: {book.author}, Жанр: {book.genre}')
+# задание 2
