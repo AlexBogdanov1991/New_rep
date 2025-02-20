@@ -38,13 +38,28 @@ queue.popleft()
 print(queue)
 
 
-from collections import deque    # задание 5
+from collections import deque
+
+def append_to_queue(queue, item):
+    queue.append(item)
+
+def append_left_to_queue(queue, item):
+    queue.appendleft(item)
+
+def pop_from_queue(queue):
+    return queue.pop() if queue else None
 
 d = deque([])
-d.append(1)
-d.appendleft(0)
-d.pop()
+
+append_to_queue(d, 1)
+append_left_to_queue(d, 0)
+removed_item = pop_from_queue(d)
+
 print(d)
+print("Удаленный элемент:", removed_item)
+# задание 5
+
+
 
 
 
