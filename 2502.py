@@ -45,7 +45,7 @@ def sleep(message):
     user_id = str(message.from_user.id)  # Используем строку для совместимости с JSON
     init_user_data(user_id)
     user_data[user_id]['start_time'] = datetime.datetime.now().isoformat()
-    save_data()  # Сохраняем данные
+    save_data()
     bot.reply_to(message, 'Вы отошли ко сну.')
 
 
@@ -61,7 +61,7 @@ def wake(message):
     duration = (end_time - start_time).total_seconds() / 3600
     user_data[user_id]['end_time'] = end_time.isoformat()
     user_data[user_id]['duration'] = duration
-    save_data()  # Сохраняем данные
+    save_data()
 
     bot.reply_to(message, f'Вы проснулись! Продолжительность сна: {duration:.2f} часа.')
 
@@ -77,7 +77,7 @@ def set_quality(message):
         quality = int(message.text.split()[1])
         if 1 <= quality <= 10:
             user_data[user_id]['quality'] = quality
-            save_data()  # Сохраняем данные
+            save_data()
             bot.reply_to(message, f'Качество сна установлено на {quality}.')
         else:
             bot.reply_to(message, 'Пожалуйста, введите качество сна от 1 до 10.')
@@ -94,11 +94,11 @@ def set_notes(message):
 
     notes = ' '.join(message.text.split()[1:])
     user_data[user_id]['notes'] = notes
-    save_data()  # Сохраняем данные
+    save_data()
     bot.reply_to(message, 'Заметка добавлена.')
 
 
 if __name__ == '__main__':
-    load_data()  # Загружаем данные при старте
+    load_data()
     bot.polling()
 
