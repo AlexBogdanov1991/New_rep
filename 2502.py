@@ -24,13 +24,7 @@ def save_data(user_data):
 def init_user_data(user_id):
     user_data = load_data()
     if user_id not in user_data:
-        user_data[user_id] = {
-            'start_time': None,
-            'end_time': None,
-            'duration': None,
-            'quality': None,
-            'notes': None
-        }
+        user_data[user_id] = []
     return user_data
 
 
@@ -43,7 +37,14 @@ def start(message):
 def sleep(message):
     user_id = str(message.from_user.id)
     user_data = init_user_data(user_id)
-    user_data[user_id]['start_time'] = datetime.datetime.now().isoformat()
+    sleep_record = {
+        'start_time': datetime.datetime.now().isoformat(),
+        'end_time': None,
+        'duration': None,
+        'quality': None,
+        'notes': None
+    }
+    user_data[user_id].append(sleep_record)
     save_data(user_data)
     bot.reply_to(message, 'Вы отошли ко сну.')
 
@@ -53,15 +54,20 @@ def wake(message):
     user_id = str(message.from_user.id)
     user_data = load_data()
 
-    if user_id not in user_data or user_data[user_id]['start_time'] is None:
+    if user_id not in user_data or not user_data[user_id]:
         bot.reply_to(message, 'Сначала укажите, что вы начали спать с помощью команды /sleep.')
         return
 
-    start_time = datetime.datetime.fromisoformat(user_data[user_id]['start_time'])
+    last_sleep_record = user_data[user_id][-1]
+    if last_sleep_record['end_time'] is not None:
+        bot.reply_to(message, 'Вы уже проснулись. Зафиксируйте новый сон, используя команду /sleep.')
+        return
+
+    start_time = datetime.datetime.fromisoformat(last_sleep_record['start_time'])
     end_time = datetime.datetime.now()
     duration = (end_time - start_time).total_seconds() / 3600
-    user_data[user_id]['end_time'] = end_time.isoformat()
-    user_data[user_id]['duration'] = duration
+    last_sleep_record['end_time'] = end_time.isoformat()
+    last_sleep_record['duration'] = duration
     save_data(user_data)
 
     bot.reply_to(message, f'Вы проснулись! Продолжительность сна: {duration:.2f} часа.')
@@ -72,14 +78,19 @@ def set_quality(message):
     user_id = str(message.from_user.id)
     user_data = load_data()
 
-    if user_id not in user_data or user_data[user_id]['duration'] is None:
+    if user_id not in user_data or not user_data[user_id]:
+        bot.reply_to(message, 'Сначала укажите время пробуждения с помощью команды /wake.')
+        return
+
+    last_sleep_record = user_data[user_id][-1]
+    if last_sleep_record['duration'] is None:
         bot.reply_to(message, 'Сначала укажите время пробуждения с помощью команды /wake.')
         return
 
     try:
         quality = int(message.text.split()[1])
         if 1 <= quality <= 10:
-            user_data[user_id]['quality'] = quality
+            last_sleep_record['quality'] = quality
             save_data(user_data)
             bot.reply_to(message, f'Качество сна установлено на {quality}.')
         else:
@@ -93,12 +104,17 @@ def set_notes(message):
     user_id = str(message.from_user.id)
     user_data = load_data()
 
-    if user_id not in user_data or user_data[user_id]['duration'] is None:
+    if user_id not in user_data or not user_data[user_id]:
+        bot.reply_to(message, 'Сначала укажите время пробуждения с помощью команды /wake.')
+        return
+
+    last_sleep_record = user_data[user_id][-1]
+    if last_sleep_record['duration'] is None:
         bot.reply_to(message, 'Сначала укажите время пробуждения с помощью команды /wake.')
         return
 
     notes = ' '.join(message.text.split()[1:])
-    user_data[user_id]['notes'] = notes
+    last_sleep_record['notes'] = notes
     save_data(user_data)
     bot.reply_to(message, 'Заметка добавлена.')
 
