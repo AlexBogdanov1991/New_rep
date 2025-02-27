@@ -21,13 +21,6 @@ def save_data(user_data):
         json.dump(user_data, f, ensure_ascii=False, indent=4)
 
 
-def init_user_data(user_id):
-    user_data = load_data()
-    if user_id not in user_data:
-        user_data[user_id] = []
-    return user_data
-
-
 @bot.message_handler(commands=['start'])
 def start(message):
     bot.reply_to(message, 'Привет! Используй /sleep для начала отслеживания сна и /wake для окончания.')
@@ -36,7 +29,11 @@ def start(message):
 @bot.message_handler(commands=['sleep'])
 def sleep(message):
     user_id = str(message.from_user.id)
-    user_data = init_user_data(user_id)
+    user_data = load_data()
+
+    if user_id not in user_data:
+        user_data[user_id] = []
+
     sleep_record = {
         'start_time': datetime.datetime.now().isoformat(),
         'end_time': None,
@@ -121,4 +118,5 @@ def set_notes(message):
 
 if __name__ == '__main__':
     bot.polling()
+
 
