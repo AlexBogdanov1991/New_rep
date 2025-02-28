@@ -34,6 +34,11 @@ def sleep(message):
     if user_id not in user_data:
         user_data[user_id] = []
 
+    # Проверяем, есть ли незавершенная запись о сне
+    if user_data[user_id] and user_data[user_id][-1]['end_time'] is None:
+        bot.reply_to(message, 'Вы уже отмечали время сна. Сначала завершите его с помощью команды /wake.')
+        return
+
     sleep_record = {
         'start_time': datetime.datetime.now().isoformat(),
         'end_time': None,
@@ -118,5 +123,4 @@ def set_notes(message):
 
 if __name__ == '__main__':
     bot.polling()
-
 
